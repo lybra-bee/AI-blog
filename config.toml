@@ -1,0 +1,31 @@
+baseURL = "https://yourusername.github.io" # заменить на URL вашего сайта
+languageCode = "ru-ru"
+title = "Мое портфолио"
+theme = "kross"
+enableRobotsTXT = true
+
+[params]
+  description = "Сайт-портфолио и блог на Hugo с темой Kross."
+  author = "Ваше Имя"
+  # Google Analytics или другие параметры по желанию
+
+[menu]
+  [[menu.main]]
+    name = "Главная"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "Статьи"
+    url = "/blog/"
+    weight = 2
+
+  [[menu.main]]
+    name = "Галерея"
+    url = "/gallery/"
+    weight = 3
+
+  [[menu.main]]
+    name = "Обо мне"
+    url = "/about/"
+    weight = 4
