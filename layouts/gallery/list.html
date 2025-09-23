@@ -1,0 +1,10 @@
+{{ define "main" }}
+<h1>Галерея</h1>
+<div class="gallery">
+  {{ range (readDir "static/images/gallery") }}
+    <div class="gallery-item">
+      <img src="/images/gallery/{{ .Name }}" alt="{{ .Name }}">
+    </div>
+  {{ end }}
+</div>
+{{ end }}
