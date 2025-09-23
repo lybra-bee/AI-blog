@@ -1,34 +1,58 @@
-name: Content Generator
+name: Generate & Deploy AI Blog
 
 on:
   schedule:
-    - cron: "0 5 * * *" # каждый день в 05:00 UTC
+    - cron: "0 6 * * *"   # каждый день в 06:00 UTC
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
+  generate-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Install deps
-        run: pip install requests
+      - name: Install Python deps
+        run: pip install requests pillow
 
-      - name: Generate content
-        run: python content_generator.py
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      - name: Generate new content
+        run: python3 scripts/generate_content.py
 
-      - name: Commit & Push
+      - name: Commit new content
         run: |
-          git config user.name github-actions[bot]
-          git config user.email github-actions[bot]@users.noreply.github.com
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add .
-          git commit -m "📝 Авто-генерация статьи"
-          git push
+          git commit -m "📝 Автогенерация статьи и изображения [CI]" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.150.0'
+          extended: true
+
+      - name: Build Hugo site
+        run: hugo --minify
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
