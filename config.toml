@@ -1,0 +1,26 @@
+baseURL = "https://libra-bee.github.io/ai-blog/"
+languageCode = "ru"
+title = "AI Blog"
+theme = "ananke"
+
+[params]
+  description = "Блог о нейросетях, ИИ и высоких технологиях"
+  images = ["images/og-image.png"]
+
+[menu]
+  [[menu.main]]
+    name = "Главная"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Статьи"
+    url = "/posts/"
+    weight = 2
+  [[menu.main]]
+    name = "Галерея"
+    url = "/gallery/"
+    weight = 3
+  [[menu.main]]
+    name = "Обо мне"
+    url = "/about/"
+    weight = 4
