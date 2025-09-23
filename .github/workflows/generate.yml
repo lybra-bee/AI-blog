@@ -1,58 +1,52 @@
 name: Generate & Deploy AI Blog
 
+# Запуск:
+# - по CRON каждый день в 06:00 UTC
+# - вручную через workflow_dispatch
 on:
   schedule:
-    - cron: "0 6 * * *"   # каждый день в 06:00 UTC
+    - cron: "0 6 * * *"
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   generate-deploy:
     runs-on: ubuntu-latest
     steps:
+      # 1. Клонируем репозиторий
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false
 
+      # 2. Устанавливаем Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
+      # 3. Устанавливаем зависимости Python
       - name: Install Python deps
-        run: pip install requests pillow
+        run: |
+          pip install requests pillow
 
+      # 4. Генерируем новую статью + изображение
       - name: Generate new content
         run: python3 scripts/generate_content.py
 
-      - name: Commit new content
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "📝 Автогенерация статьи и изображения [CI]" || echo "No changes to commit"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-
+      # 5. Настройка Hugo
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: '0.150.0'
           extended: true
 
+      # 6. Сборка Hugo-сайта
       - name: Build Hugo site
         run: hugo --minify
 
+      # 7. Публикация в gh-pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: gh-pages
+          keep_files: true
