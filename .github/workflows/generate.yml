@@ -1,37 +1,51 @@
-name: Deploy Hugo site to GitHub Pages
+name: Generate & Deploy Hugo site
 
 on:
+  schedule:
+    - cron: '0 6 * * *'   # каждый день в 06:00 UTC
+  workflow_dispatch:      # запуск вручную
   push:
     branches:
-      - main   # 🚀 Деплой запускается при пуше в main
-
-permissions:
-  contents: write   # нужно для публикации в gh-pages
+      - main
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          submodules: true   # подтянет тему Hugo
-          fetch-depth: 0     # нужно для правильного рендера
+          submodules: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt || true
+
+      - name: Run content generator
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          python3 content_generator.py
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: '0.133.0'  # можешь поменять на актуальную
+          hugo-version: '0.133.0'
           extended: true
 
-      - name: Build
-        run: hugo --minify
+      - name: Build Hugo site
+        run: hugo --minify -d docs
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          publish_branch: gh-pages
-
+          publish_dir: ./docs
