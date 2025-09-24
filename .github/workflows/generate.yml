@@ -33,7 +33,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          python3 content_generator.py
+          python3 /scripts/content_generator.py
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
