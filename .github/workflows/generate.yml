@@ -35,6 +35,8 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add content/posts assets/images
+        git add content/posts
+        git add assets/images || echo "No images generated"
         git commit -m "📝 Generate daily content" || echo "No changes to commit"
         git push origin main
+
