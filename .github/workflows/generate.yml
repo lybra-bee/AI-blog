@@ -52,7 +52,7 @@ jobs:
 
       # 8. Генерируем сайт
       - name: Build Hugo site
-        run: hugo --minify --verbose
+        run: hugo --minify --logLevel=debug
 
       # 9. Публикуем на gh-pages
       - name: Deploy to GitHub Pages
