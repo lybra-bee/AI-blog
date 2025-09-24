@@ -5,6 +5,7 @@ on:
     branches:
       - main
   workflow_dispatch:
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -50,11 +51,21 @@ jobs:
             npm ci
           fi
 
-      # 8. Генерируем сайт
-      - name: Build Hugo site
-        run: hugo --minify --logLevel=debug
+      # 8. Создаём чистую папку public
+      - name: Ensure public directory
+        run: |
+          rm -rf public
+          mkdir -p public
 
-      # 9. Публикуем на gh-pages
+      # 9. Генерируем сайт с явным указанием папки вывода
+      - name: Build Hugo site
+        run: hugo --minify --destination ./public --logLevel=debug
+
+      # 10. Выводим содержимое public для отладки
+      - name: Check public directory
+        run: ls -R public
+
+      # 11. Публикуем на gh-pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
