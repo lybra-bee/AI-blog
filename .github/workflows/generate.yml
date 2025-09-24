@@ -4,53 +4,60 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
       # 1. Клонируем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: 'recursive'
 
-      # 2. Устанавливаем Python для генерации контента
+      # 2. Устанавливаем Python 3
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12
+          python-version: '3.12'
 
-      # 3. Устанавливаем зависимости для Python
-      - name: Install Python dependencies
+      # 3. Устанавливаем зависимости Python
+      - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install requests Pillow
 
-      # 4. Генерация контента
-      - name: Generate content
-        run: |
-          python content_generator.py
+      # 4. Запускаем генерацию контента (статьи + изображения)
+      - name: Run content generator
+        run: python content_generator.py
 
-      # 5. Устанавливаем Hugo
+      # 5. Устанавливаем Hugo Extended
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.148.0'
           extended: true
 
-      # 6. Сборка Hugo сайта
+      # 6. Устанавливаем Node.js (если используешь PostCSS)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # 7. Устанавливаем npm-пакеты (если есть package.json)
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+
+      # 8. Генерируем сайт
       - name: Build Hugo site
         run: hugo --minify
 
-      # 7. Публикуем в ветку gh-pages
+      # 9. Публикуем на gh-pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: gh-pages
-          user_name: github-actions
-          user_email: github-actions@github.com
