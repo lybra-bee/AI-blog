@@ -1,42 +1,56 @@
-name: Generate Daily Content
+name: Build and Deploy Hugo Site
 
 on:
-  schedule:
-    - cron: '0 0 * * *'  # каждый день в полночь
-  workflow_dispatch:       # возможность запускать вручную
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  generate:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Получаем репозиторий
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # 1. Клонируем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
-    # 2. Настраиваем Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
+      # 2. Устанавливаем Python для генерации контента
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
 
-    # 3. Устанавливаем зависимости для скрипта генерации
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests Pillow openai
+      # 3. Устанавливаем зависимости для Python
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests Pillow
 
-    # 4. Запускаем скрипт генерации контента
-    - name: Run content generator
-      run: python content_generator.py
+      # 4. Генерация контента
+      - name: Generate content
+        run: |
+          python content_generator.py
 
-    # 5. Коммитим и пушим сгенерированный контент
-    - name: Commit generated content
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add content/posts
-        git add assets/images || echo "No images generated"
-        git commit -m "📝 Generate daily content" || echo "No changes to commit"
-        git push origin main
+      # 5. Устанавливаем Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '1.15.0'
+          extended: true
 
+      # 6. Сборка Hugo сайта
+      - name: Build Hugo site
+        run: hugo --minify
+
+      # 7. Публикуем в ветку gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          user_name: github-actions
+          user_email: github-actions@github.com
