@@ -10,17 +10,17 @@ publishDir = "public"
 [menu]
   [[menu.main]]
     name = "Главная"
-    url = "/"
+    url = "/AI-blog/"
     weight = 1
   [[menu.main]]
     name = "Статьи"
-    url = "/posts/"
+    url = "/AI-blog/posts/"
     weight = 2
   [[menu.main]]
     name = "Галерея"
-    url = "/gallery/"
+    url = "/AI-blog/gallery/"
     weight = 3
   [[menu.main]]
     name = "Обо мне"
-    url = "/about/"
+    url = "/AI-blog/about/"
     weight = 4
