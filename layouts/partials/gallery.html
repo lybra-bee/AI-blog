@@ -1,11 +1,13 @@
-<section class="gallery">
+<div class="gallery-section">
   <h2>Галерея</h2>
   <div class="gallery-grid">
     {{ $images := (readDir "static/images/gallery") }}
     {{ range $images }}
-      <div class="gallery-item">
-        <img src="{{ "images/gallery/" | relURL }}{{ .Name }}" alt="{{ .Name }}">
-      </div>
+      {{ if not .IsDir }}
+        <div class="gallery-item">
+          <img src="{{ printf "images/gallery/%s" .Name | relURL }}" alt="{{ .Name }}">
+        </div>
+      {{ end }}
     {{ end }}
   </div>
-</section>
+</div>
