@@ -1,0 +1,17 @@
+<head>
+  <meta charset="UTF-8">
+  <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+  <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta property="og:image" content="{{ with .Params.image }}{{ . }}{{ else }}{{ index .Site.Params.images 0 }}{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:type" content="website">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ "ananke/css/main.min.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+</head>
