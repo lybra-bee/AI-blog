@@ -1,17 +1,18 @@
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
   <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Open Graph -->
+  {{/* Open Graph image: используем absURL чтобы получить полный URL */}}
+  {{ $og := "" }}
+  {{ with .Params.image }}{{ $og = . }}{{ else }}{{ with index .Site.Params.images 0 }}{{ $og = . }}{{ end }}{{ end }}
+  {{ if $og }}<meta property="og:image" content="{{ $og | absURL }}">{{ end }}
   <meta property="og:title" content="{{ .Title }}">
   <meta property="og:description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
-  <meta property="og:image" content="{{ with .Params.image }}{{ . }}{{ else }}{{ index .Site.Params.images 0 }}{{ end }}">
-  <meta property="og:url" content="{{ .Permalink }}">
-  <meta property="og:type" content="website">
 
-  <!-- CSS -->
+  <!-- Theme CSS (из темы Ananke) -->
   <link rel="stylesheet" href="{{ "ananke/css/main.min.css" | relURL }}">
+  <!-- Наш кастомный CSS — файл должен лежать в static/css/custom.css -->
   <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
 </head>
