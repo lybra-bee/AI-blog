@@ -1,61 +1,181 @@
+/* =========================
+   Общие стили
+========================= */
 body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  background: #f7f7f7;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
 }
 
-header, footer {
-  background-color: #1a1a1a;
-  color: white;
-  padding: 1rem;
-  text-align: center;
+a {
+    color: #007acc;
+    text-decoration: none;
 }
 
-nav a {
-  color: white;
-  margin: 0 1rem;
-  text-decoration: none;
-  font-weight: bold;
+a:hover {
+    text-decoration: underline;
 }
 
-.hero {
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-size: cover;
-  background-position: center;
-  border-radius: 8px;
+/* =========================
+   Шапка (Header)
+========================= */
+header {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+header nav a {
+    margin: 0 1rem;
+    font-weight: 500;
+}
+
+/* =========================
+   Главная страница
+========================= */
+.latest-post {
+    max-width: 800px;
+    margin: 3rem auto;
+    text-align: center;
+    padding: 0 1rem;
+}
+
+.latest-post h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.latest-post img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.latest-post .post-content {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.latest-post a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #007acc;
+    color: white;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.latest-post a:hover {
+    background-color: #005fa3;
+}
+
+/* =========================
+   Галерея
+========================= */
 .gallery-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  padding: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    padding: 2rem;
 }
 
 .gallery-item img {
-  width: 200px;
-  height: auto;
-  border-radius: 8px;
+    width: 200px;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s;
 }
 
-.recent-posts ul {
-  list-style: none;
-  padding: 0;
+.gallery-item img:hover {
+    transform: scale(1.05);
 }
 
-.recent-posts li {
-  margin-bottom: 1rem;
+/* =========================
+   Страницы статей
+========================= */
+.post-content {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    line-height: 1.7;
 }
 
-.post-hero {
-  height: 300px;
-  background-size: cover;
-  background-position: center;
-  margin-bottom: 1rem;
+.post-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+/* =========================
+   Футер
+========================= */
+footer {
+    background-color: #222;
+    color: #eee;
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: #007acc;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   Кнопки и мелкие элементы
+========================= */
+button, .btn {
+    padding: 0.5rem 1rem;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+button:hover, .btn:hover {
+    background-color: #005fa3;
+}
+
+/* =========================
+   Адаптив
+========================= */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .latest-post h1 {
+        font-size: 1.5rem;
+    }
+    
+    .gallery-item img {
+        width: 45%;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-item img {
+        width: 100%;
+    }
 }
