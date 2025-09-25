@@ -1,9 +1,16 @@
-<header class="flex justify-between items-center p-4 bg-black/70 text-white">
-  <a href="/" class="text-2xl font-bold">AI Blog</a>
-  <nav class="flex gap-6">
-    <a href="/" class="flex items-center gap-2"><img src="/assets/images/icon_ai.png" width="24"> Главная</a>
-    <a href="/posts/" class="flex items-center gap-2"><img src="/assets/images/icon_video.png" width="24"> Статьи</a>
-    <a href="/gallery/" class="flex items-center gap-2"><img src="/assets/images/icon_music.png" width="24"> Галерея</a>
-    <a href="/about/" class="flex items-center gap-2">Обо мне</a>
-  </nav>
+<header class="site-header">
+  <div class="container">
+    <a href="{{ "/" | relURL }}" class="brand">{{ .Site.Title }}</a>
+    <nav class="site-nav">
+      <a href="{{ "/" | relURL }}">Главная</a>
+      <a href="{{ "/posts/" | relURL }}">Статьи</a>
+      <a href="{{ "/gallery/" | relURL }}">Галерея</a>
+      <a href="{{ "/about/" | relURL }}">Обо мне</a>
+    </nav>
+    <div class="header-icons">
+      <img src="{{ "images/icon_ai.png" | relURL }}" alt="ai" width="28">
+      <img src="{{ "images/icon_video.png" | relURL }}" alt="video" width="28">
+      <img src="{{ "images/icon_music.png" | relURL }}" alt="music" width="28">
+    </div>
+  </div>
 </header>
