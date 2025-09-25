@@ -1,12 +1,9 @@
 {{ define "main" }}
-<section class="gallery-grid px-8 py-16">
-  {{ range (slice
-    "/assets/images/gallery_card_01.png"
-    "/assets/images/gallery_card_02.png"
-    "/assets/images/gallery_card_03.png"
-    "/assets/images/gallery_card_04.png") }}
-    <div class="gallery-card">
-      <img src="{{ . }}" alt="Галерея">
+<section class="gallery-grid">
+  {{ $images := (readDir "static/images/gallery") }}
+  {{ range $images }}
+    <div class="gallery-item">
+      <img src="{{ "images/gallery/" | relURL }}{{ .Name }}" alt="{{ .Name }}">
     </div>
   {{ end }}
 </section>
