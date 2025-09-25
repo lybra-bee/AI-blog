@@ -1,9 +1,11 @@
 {{ define "main" }}
-<article class="prose lg:prose-xl mx-auto my-12 p-6 bg-white/80 rounded-xl shadow-lg">
-  {{ if .Params.image }}
-    <img src="{{ .Params.image }}" alt="{{ .Title }}" class="rounded-lg mb-6 mx-auto">
-  {{ end }}
+<article class="post">
   <h1>{{ .Title }}</h1>
-  {{ .Content }}
+  {{ if .Params.image }}
+    <div class="post-hero" style="background-image: url('{{ .Params.image | relURL }}');"></div>
+  {{ end }}
+  <div class="post-content">
+    {{ .Content }}
+  </div>
 </article>
 {{ end }}
