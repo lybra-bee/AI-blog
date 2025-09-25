@@ -1,136 +1,194 @@
-/* =========================
-   Общие стили
-========================= */
+/* ===========================
+   Основные стили сайта
+=========================== */
+
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
-    color: #333;
 }
 
-a {
-    color: #007acc;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* =========================
-   Шапка (Header)
-========================= */
+/* ===========================
+   Стили шапки
+=========================== */
 header {
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background-color: rgba(52, 58, 64, 0.9); /* полупрозрачный темный фон */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+header nav {
+    margin-top: 10px;
 }
 
 header nav a {
-    margin: 0 1rem;
-    font-weight: 500;
-}
-
-/* =========================
-   Главная страница
-========================= */
-.latest-post {
-    max-width: 800px;
-    margin: 3rem auto;
-    text-align: center;
-    padding: 0 1rem;
-}
-
-.latest-post h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.latest-post img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-}
-
-.latest-post .post-content {
-    font-size: 1.05rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.latest-post a {
     display: inline-block;
-    padding: 0.5rem 1rem;
-    background-color: #007acc;
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #007bff;
     color: white;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: 0.3s;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
 
-.latest-post a:hover {
-    background-color: #005fa3;
+header nav a:hover {
+    background-color: #0056b3;
 }
 
-/* =========================
+/* ===========================
+   Фоновые изображения
+=========================== */
+
+.hero {
+    position: relative;
+    background-image: url("/images/bg_main_gradient.png");
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    z-index: 2;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top:0; left:0;
+    width: 100%; height:100%;
+    background-color: rgba(0,0,0,0.3); /* затемнение фона */
+}
+
+/* ===========================
+   Основной контент
+=========================== */
+
+main {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===========================
+   Статьи и блок последней статьи
+=========================== */
+
+.post {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.post img {
+    width: 100%;
+    display: block;
+}
+
+.post h2 {
+    padding: 20px;
+    font-size: 1.8rem;
+}
+
+.post p {
+    padding: 0 20px 20px;
+    font-size: 1rem;
+    color: #555;
+}
+
+/* ===========================
    Галерея
-========================= */
-.gallery-grid {
+=========================== */
+
+.gallery {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 20px;
     justify-content: center;
-    padding: 2rem;
 }
 
-.gallery-item img {
-    width: 200px;
-    height: auto;
-    border-radius: 8px;
+.gallery-item {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 300px;
+    text-align: center;
     transition: transform 0.3s;
 }
 
-.gallery-item img:hover {
-    transform: scale(1.05);
+.gallery-item:hover {
+    transform: translateY(-5px);
 }
 
-/* =========================
-   Страницы статей
-========================= */
-.post-content {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    line-height: 1.7;
+.gallery-item img {
+    width: 100%;
+    display: block;
 }
 
-.post-content img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 1rem 0;
+.gallery-item h2 {
+    font-size: 1.2rem;
+    margin: 10px 0 5px 0;
 }
 
-/* =========================
-   Футер
-========================= */
+.gallery-item p {
+    font-size: 0.95rem;
+    padding: 0 10px 10px 10px;
+    color: #555;
+}
+
+/* ===========================
+   Кнопки
+=========================== */
+
+button, .btn {
+    padding: 10px 25px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover, .btn:hover {
+    background-color: #0056b3;
+}
+
+/* ===========================
+   Подвал
+=========================== */
+
 footer {
-    background-color: #222;
-    color: #eee;
-    padding: 2rem;
+    background-color: #343a40;
+    color: white;
+    padding: 30px 20px;
     text-align: center;
     font-size: 0.9rem;
 }
 
 footer a {
-    color: #007acc;
+    color: #007bff;
     text-decoration: none;
 }
 
@@ -138,44 +196,33 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* =========================
-   Кнопки и мелкие элементы
-========================= */
-button, .btn {
-    padding: 0.5rem 1rem;
-    background-color: #007acc;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.3s;
+/* ===========================
+   Иконки
+=========================== */
+
+.icon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    margin: 0 10px;
+    vertical-align: middle;
 }
 
-button:hover, .btn:hover {
-    background-color: #005fa3;
-}
+/* ===========================
+   Адаптивность
+=========================== */
 
-/* =========================
-   Адаптив
-========================= */
 @media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
+    .hero h1 {
+        font-size: 2rem;
     }
-    
-    .latest-post h1 {
-        font-size: 1.5rem;
-    }
-    
-    .gallery-item img {
-        width: 45%;
-    }
-}
 
-@media (max-width: 480px) {
-    .gallery-item img {
+    .gallery-item {
         width: 100%;
+    }
+
+    header nav a {
+        display: block;
+        margin: 5px 0;
     }
 }
