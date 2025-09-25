@@ -1,15 +1,39 @@
-/* Простой набор стилей, можно расширять */
-body.home {
-  background: url('{{ "images/bg_main_gradient.png" | relURL }}') no-repeat center center fixed;
-  background-size: cover;
-  color: #fff;
+/* Основные стили сайта */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
-.site-header { background: rgba(0,0,0,0.6); padding: 12px 20px; display:flex; justify-content:space-between; align-items:center; }
-.brand { font-weight:700; font-size:20px; color:#fff; text-decoration:none; }
-.site-nav a { color:#ddd; margin-left:16px; text-decoration:none; }
-.site-nav a:hover { color:#fff; }
-.site-footer { padding: 30px 0; background:#0b0b0b; color:#bbb; margin-top:40px; }
 
-/* Примитивная сетка для галереи (если используешь) */
-.gallery-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:20px; padding:30px; }
-.gallery-card img { width:100%; border-radius:12px; display:block; }
+/* Фоновые секции */
+.about-section {
+    background-image: url('../images/bg_about.png');
+    background-size: cover;
+    background-position: center;
+    padding: 80px 20px;
+    color: #fff;
+    text-align: center;
+}
+
+.main-section {
+    background-image: url('../images/bg_main_gradient.png');
+    background-size: cover;
+    background-position: center;
+    padding: 80px 20px;
+    color: #fff;
+    text-align: center;
+}
+
+/* Галерея */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
