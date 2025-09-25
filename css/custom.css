@@ -1,39 +1,32 @@
-/* Основные стили сайта */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  background: #f7f7f7;
 }
 
-/* Фоновые секции */
-.about-section {
-    background-image: url('../images/bg_about.png');
-    background-size: cover;
-    background-position: center;
-    padding: 80px 20px;
-    color: #fff;
-    text-align: center;
+header, footer {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 1rem;
+  text-align: center;
 }
 
-.main-section {
-    background-image: url('../images/bg_main_gradient.png');
-    background-size: cover;
-    background-position: center;
-    padding: 80px 20px;
-    color: #fff;
-    text-align: center;
+nav a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
 }
 
-/* Галерея */
 .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem;
 }
 
 .gallery-item img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
+  width: 200px;
+  height: auto;
+  border-radius: 8px;
 }
