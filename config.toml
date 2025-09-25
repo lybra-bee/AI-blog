@@ -1,4 +1,4 @@
-baseURL = "https://lybra-bee.github.io/Ai-blog/"
+baseURL = "https://lybra-bee.github.io/AI-blog/"
 languageCode = "ru"
 title = "AI Blog"
 theme = "ananke"
