@@ -1,0 +1,11 @@
+<div class="recent-posts">
+  <h2>Последние статьи</h2>
+  <ul>
+    {{ range first 5 (where .Site.RegularPages "Type" "posts") }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <p>{{ .Summary }}</p>
+      </li>
+    {{ end }}
+  </ul>
+</div>
