@@ -1,8 +1,11 @@
 {{ define "main" }}
-<section class="main-section">
-  <h1>{{ .Site.Title }}</h1>
-  <p>{{ .Site.Params.description }}</p>
-</section>
+  <section class="hero">
+    <img src="{{ "images/bg_main_gradient.png" | relURL }}" alt="Главный баннер">
+    <h1>{{ .Site.Title }}</h1>
+    <p>{{ .Site.Params.description }}</p>
+  </section>
 
-{{ partial "gallery.html" . }}
+  {{ partial "gallery.html" . }}
+
+  {{ partial "recent_posts.html" . }}
 {{ end }}
