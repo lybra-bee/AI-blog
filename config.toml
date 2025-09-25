@@ -3,6 +3,7 @@ languageCode = "ru"
 title = "AI Blog"
 theme = "ananke"
 publishDir = "public"
+
 [params]
   description = "Блог о нейросетях, ИИ и высоких технологиях"
   images = ["images/og-image.png"]
@@ -10,17 +11,17 @@ publishDir = "public"
 [menu]
   [[menu.main]]
     name = "Главная"
-    url = "/AI-blog/"
+    url = "/"
     weight = 1
   [[menu.main]]
     name = "Статьи"
-    url = "/AI-blog/posts/"
+    url = "/posts/"
     weight = 2
   [[menu.main]]
     name = "Галерея"
-    url = "/AI-blog/gallery/"
+    url = "/gallery/"
     weight = 3
   [[menu.main]]
     name = "Обо мне"
-    url = "/AI-blog/about/"
+    url = "/about/"
     weight = 4
