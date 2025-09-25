@@ -1,7 +1,12 @@
-<!doctype html>
-<html lang="{{ .Site.Language.Lang }}">
-  {{ partial "head.html" . }}
-<body class="{{ .Type }} {{ if .IsHome }}home{{ end }}">
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+  <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+</head>
+<body>
   {{ partial "header.html" . }}
 
   <main>
