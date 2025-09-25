@@ -1,10 +1,13 @@
 {{ define "main" }}
-<h1>Галерея</h1>
-<div class="gallery">
-  {{ range (readDir "static/images/gallery") }}
-    <div class="gallery-item">
-      <img src="/images/gallery/{{ .Name }}" alt="{{ .Name }}">
+<section class="gallery-grid px-8 py-16">
+  {{ range (slice
+    "/assets/images/gallery_card_01.png"
+    "/assets/images/gallery_card_02.png"
+    "/assets/images/gallery_card_03.png"
+    "/assets/images/gallery_card_04.png") }}
+    <div class="gallery-card">
+      <img src="{{ . }}" alt="Галерея">
     </div>
   {{ end }}
-</div>
+</section>
 {{ end }}
