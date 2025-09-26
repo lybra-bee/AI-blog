@@ -1,0 +1,11 @@
+{{ $latest := first 1 (where .Site.RegularPages "Section" "posts") }}
+{{ range $latest }}
+<div class="post">
+    {{ with .Params.image }}
+        <img src="{{ . | relURL }}" alt="{{ $.Title }}">
+    {{ end }}
+    <h2>{{ .Title }}</h2>
+    <p>{{ .Summary }}</p>
+    <a href="{{ .RelPermalink }}" class="btn">Читать далее</a>
+</div>
+{{ end }}
