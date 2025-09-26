@@ -1,5 +1,6 @@
----
-title: "Галерея"
-layout: "gallery/list"
-image: "/images/gallery/your-image.jpg"
----
++++
+title = "Галерея"
+draft = false
++++
+
+Добро пожаловать в галерею изображений.
