@@ -1,17 +1,16 @@
 {{ define "main" }}
-<section class="latest-post">
-  {{ $last := first 1 (where .Site.RegularPages "Section" "posts") }}
-  {{ range $last }}
-    <article class="post">
-      <h1>{{ .Title }}</h1>
-      {{ with .Params.image }}
-        <img src="{{ . | relURL }}" alt="{{ $.Title }}">
-      {{ end }}
-      <div class="post-content">
-        {{ .Summary }}
-      </div>
-      <a href="{{ .RelPermalink }}">Читать далее</a>
-    </article>
-  {{ end }}
+<section class="hero">
+  <div class="hero-inner container">
+    <div class="hero-text">
+      <h1>{{ .Site.Title }}</h1>
+      <p>{{ .Site.Params.description }}</p>
+      <a class="btn" href="{{ "/AI-blog/posts/" | relURL }}">Читать статьи</a>
+    </div>
+    <div class="hero-media">
+      <img src="{{ "images/bg_main_gradient.png" | relURL }}" alt="фон">
+    </div>
+  </div>
 </section>
+
+{{ partial "recent_posts.html" . }}
 {{ end }}
