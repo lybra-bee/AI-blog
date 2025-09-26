@@ -1,12 +1,22 @@
 {{ define "main" }}
-<section class="posts-list">
+<main>
   <h1>{{ .Title }}</h1>
-  <ul>
-    {{ range .Pages }}
-      <li>
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-      </li>
-    {{ end }}
-  </ul>
-</section>
+  {{ if .Content }}
+    <div class="content">{{ .Content | safeHTML }}</div>
+  {{ end }}
+
+  {{ if .Pages }}
+    <div class="section-items">
+      {{ range .Pages }}
+        <article class="post">
+          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          {{ if .Params.image }}
+            <img src="{{ .Params.image | relURL }}" alt="{{ .Title }}">
+          {{ end }}
+          <p>{{ .Summary }}</p>
+        </article>
+      {{ end }}
+    </div>
+  {{ end }}
+</main>
 {{ end }}
