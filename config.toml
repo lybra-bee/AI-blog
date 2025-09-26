@@ -3,8 +3,9 @@ languageCode = "ru"
 title = "AI Blog"
 theme = "ananke"
 defaultContentLanguage = "ru"
-paginate = 5
-enableRobotsTXT = true
+
+[pagination]
+pagerSize = 5   # заменяем deprecated paginate
 
 
 [params]
