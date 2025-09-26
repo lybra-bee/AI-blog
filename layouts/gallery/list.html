@@ -1,3 +1,11 @@
 {{ define "main" }}
-  {{ partial "gallery.html" . }}
+<h1>{{ .Title }}</h1>
+<div class="gallery">
+{{ $images := (readDir "static/images/gallery") }}
+{{ range $images }}
+    <div class="gallery-item">
+        <img src="{{ "images/gallery/" | relURL }}{{ .Name }}" alt="{{ .Name }}">
+    </div>
+{{ end }}
+</div>
 {{ end }}
