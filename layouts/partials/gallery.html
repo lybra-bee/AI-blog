@@ -1,7 +1,7 @@
-<div class="gallery-section">
+<section class="gallery">
   <h2>Галерея</h2>
   <div class="gallery-grid">
-    {{ $images := (readDir "static/images/gallery") }}
+    {{ $images := readDir "static/images/gallery" }}
     {{ range $images }}
       {{ if not .IsDir }}
         <div class="gallery-item">
@@ -10,4 +10,4 @@
       {{ end }}
     {{ end }}
   </div>
-</div>
+</section>
