@@ -139,7 +139,7 @@ def save_post(title: str, body: str, featured_image_filename: str | None = None)
     filename = POSTS_DIR / f"{today}-{slug}.md"
     frontmatter = [
         "+++",
-        f'title = "{title.replace(\'"\', "\'")}"',
+        f"title: \"{title.replace('\"', '\'')}\"",
         'draft = false',
     ]
     if featured_image_filename:
