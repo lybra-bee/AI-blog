@@ -1,0 +1,15 @@
+{{ define "main" }}
+<section class="posts-list container">
+  {{ range .Pages }}
+    <article class="post-summary">
+      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      {{ with .Params.featured_image }}
+        <div class="thumb">
+          <img src="{{ printf "images/%s" . | relURL }}" alt="{{ .Title }}">
+        </div>
+      {{ end }}
+      <p>{{ .Summary }}</p>
+    </article>
+  {{ end }}
+</section>
+{{ end }}
