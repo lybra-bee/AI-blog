@@ -1,11 +1,6 @@
 {{ define "main" }}
-<article class="post">
+<main>
   <h1>{{ .Title }}</h1>
-  {{ if .Params.image }}
-    <div class="post-hero" style="background-image: url('{{ .Params.image | relURL }}');"></div>
-  {{ end }}
-  <div class="post-content">
-    {{ .Content }}
-  </div>
-</article>
+  <div class="content">{{ .Content | safeHTML }}</div>
+</main>
 {{ end }}
