@@ -1,11 +1,3 @@
 {{ define "main" }}
-  <div class="gallery">
-    {{ range .Pages }}
-      <div class="gallery-item">
-        <img src="{{ .Params.image }}" alt="{{ .Title }}">
-        <h2>{{ .Title }}</h2>
-        <p>{{ .Summary }}</p>
-      </div>
-    {{ end }}
-  </div>
+  {{ partial "gallery.html" . }}
 {{ end }}
