@@ -1,8 +1,14 @@
-<header>
-  <nav>
-    <a href="{{ "/AI-blog/" | relURL }}">Главная</a>
-    <a href="{{ "/AI-blog/posts/" | relURL }}">Статьи</a>
-    <a href="{{ "/AI-blog/gallery/" | relURL }}">Галерея</a>
-    <a href="{{ "/AI-blog/about/" | relURL }}">Обо мне</a>
-  </nav>
+<header class="site-header">
+  <div class="container">
+    <div class="brand">
+      <a class="logo" href="{{ "/AI-blog/" | relURL }}">{{ .Site.Title }}</a>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        {{ range .Site.Menus.main }}
+          <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+        {{ end }}
+      </ul>
+    </nav>
+  </div>
 </header>
