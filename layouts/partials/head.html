@@ -1,18 +1,9 @@
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
-  <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
-
-  {{/* Open Graph image: используем absURL чтобы получить полный URL */}}
-  {{ $og := "" }}
-  {{ with .Params.image }}{{ $og = . }}{{ else }}{{ with index .Site.Params.images 0 }}{{ $og = . }}{{ end }}{{ end }}
-  {{ if $og }}<meta property="og:image" content="{{ $og | absURL }}">{{ end }}
-  <meta property="og:title" content="{{ .Title }}">
-  <meta property="og:description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
-
-  <!-- Theme CSS (из темы Ananke) -->
-  <link rel="stylesheet" href="{{ "ananke/css/main.min.css" | relURL }}">
-  <!-- Наш кастомный CSS — файл должен лежать в static/css/custom.css -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
+  <meta name="description" content="{{ .Site.Params.description }}" />
   <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
