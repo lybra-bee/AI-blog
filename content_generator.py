@@ -4,7 +4,7 @@ import requests
 import json
 from datetime import datetime
 
-# 🔑 Ключ OpenRouter (нужно добавить в GitHub Secrets: OPENROUTER_API_KEY)
+# 🔑 Ключ OpenRouter (обязательно в GitHub Secrets: OPENROUTER_API_KEY)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
 LLM_MODEL = "openai/gpt-4o-mini"  # можно заменить на "anthropic/claude-3.5-sonnet"
 
@@ -27,6 +27,7 @@ def generate_article():
         headers=headers,
         json={
             "model": LLM_MODEL,
+            "max_tokens": 500,  # ✅ ограничение, чтобы не упираться в лимит
             "messages": [{"role": "user", "content": prompt}],
         },
         timeout=60,
@@ -53,12 +54,10 @@ def create_post():
     """Создание файла поста"""
     title, content = generate_article()
 
-    # Дата и slug
     today = datetime.now().strftime("%Y-%m-%d")
     slug = title.lower().replace(" ", "-").replace('"', "").replace("'", "")
 
     filename = f"content/posts/{today}-{slug}.md"
-
     os.makedirs("content/posts", exist_ok=True)
 
     with open(filename, "w", encoding="utf-8") as f:
@@ -73,4 +72,3 @@ def create_post():
 
 if __name__ == "__main__":
     create_post()
-
