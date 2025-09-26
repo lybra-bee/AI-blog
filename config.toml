@@ -1,11 +1,13 @@
 baseURL = "https://lybra-bee.github.io/AI-blog/"
-languageCode = "ru"
+languageCode = "ru-ru"
 title = "AI Blog"
 theme = "ananke"
-defaultContentLanguage = "ru"
+
+[params]
+  mainSections = ["posts"]
 
 [pagination]
-pagerSize = 5   # заменяем deprecated paginate
+  pagerSize = 5
 
 
 [params]
