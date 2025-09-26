@@ -1,11 +1,16 @@
-<div class="recent-posts">
-  <h2>Последние статьи</h2>
-  <ul>
-    {{ range first 5 (where .Site.RegularPages "Type" "posts") }}
-      <li>
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <p>{{ .Summary }}</p>
-      </li>
-    {{ end }}
-  </ul>
-</div>
+<section class="recent-posts">
+  {{ $pages := where .Site.RegularPages "Type" "posts" }}
+  {{ $latest := first 1 (sort $pages "Date" "desc") }}
+  {{ range $latest }}
+    <article class="post">
+      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      {{ with .Params.featured_image }}
+        <div class="post-image">
+          <img src="{{ printf "images/%s" . | relURL }}" alt="{{ .Title }}">
+        </div>
+      {{ end }}
+      <p>{{ .Summary }}</p>
+      <a class="btn" href="{{ .RelPermalink }}">Читать далее</a>
+    </article>
+  {{ end }}
+</section>
