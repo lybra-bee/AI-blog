@@ -2,7 +2,10 @@ baseURL = "https://lybra-bee.github.io/AI-blog/"
 languageCode = "ru"
 title = "AI Blog"
 theme = "ananke"
-publishDir = "public"
+defaultContentLanguage = "ru"
+paginate = 5
+enableRobotsTXT = true
+
 
 [params]
   description = "Блог о нейросетях, ИИ и высоких технологиях"
