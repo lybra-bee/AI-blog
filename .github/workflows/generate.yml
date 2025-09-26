@@ -1,6 +1,8 @@
-name: Build and Deploy Hugo Site
+name: Build, Generate Content and Deploy Hugo Site
 
 on:
+  schedule:
+    - cron: "0 6 * * *"   # каждый день в 6 утра UTC
   push:
     branches:
       - main
@@ -15,57 +17,57 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Устанавливаем Python 3
+      # 2. Устанавливаем Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      # 3. Устанавливаем зависимости Python
+      # 3. Устанавливаем зависимости
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install requests Pillow
 
-      # 4. Запускаем генерацию контента (статьи + изображения)
+      # 4. Запускаем генератор (с API ключом)
       - name: Run content generator
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python content_generator.py
 
-      # 5. Устанавливаем Hugo Extended
+      # 5. Коммитим новые статьи и изображения (если есть)
+      - name: Commit new content
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/posts/ static/images/gallery/
+          git commit -m "📝 Автоматическая генерация статьи и изображения [CI]" || echo "Нет изменений"
+          git push
+
+      # 6. Устанавливаем Hugo Extended
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.148.0'
           extended: true
 
-      # 6. Устанавливаем Node.js (если используешь PostCSS)
+      # 7. Устанавливаем Node.js (для PostCSS, если нужно)
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # 7. Устанавливаем npm-пакеты (если есть package.json)
       - name: Install dependencies
         run: |
           if [ -f package.json ]; then
             npm ci
           fi
 
-      # 8. Создаём чистую папку public
-      - name: Ensure public directory
-        run: |
-          rm -rf public
-          mkdir -p public
-
-      # 9. Генерируем сайт с явным указанием папки вывода
+      # 8. Генерация Hugo сайта
       - name: Build Hugo site
         run: hugo --minify --destination ./public --logLevel=debug
 
-      # 10. Выводим содержимое public для отладки
-      - name: Check public directory
-        run: ls -R public
-
-      # 11. Публикуем на gh-pages
+      # 9. Публикуем на GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
