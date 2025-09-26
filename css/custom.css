@@ -1,228 +1,73 @@
-/* ===========================
-   Основные стили сайта
-=========================== */
-
-body {
-    font-family: 'Arial', sans-serif;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
+/* custom.css — полный набор стилей для сайта */
+:root{
+  --bg:#f5f7fb;
+  --accent:#ff7a18;
+  --dark:#1f2933;
+  --muted:#6b7280;
+  --container:1100px;
+  --radius:10px;
 }
 
-/* ===========================
-   Стили шапки
-=========================== */
-header {
-    background-color: rgba(52, 58, 64, 0.9); /* полупрозрачный темный фон */
-    color: white;
-    padding: 20px;
-    text-align: center;
-    position: relative;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+  background:var(--bg); color:var(--dark); -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-}
+/* container */
+.container{max-width:var(--container); margin:0 auto; padding:0 16px}
 
-header nav {
-    margin-top: 10px;
-}
+/* header */
+.site-header{background:rgba(0,0,0,0.6); color:#fff; position:sticky; top:0; z-index:50}
+.site-header .container{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.logo{font-weight:700; color:#fff; text-decoration:none; font-size:1.2rem}
+.main-nav ul{display:flex;gap:12px;list-style:none;margin:0;padding:0}
+.main-nav a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:all .18s}
+.main-nav a:hover{background:rgba(255,255,255,0.08)}
 
-header nav a {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 0 5px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
+/* hero */
+.hero{position:relative; overflow:hidden; margin-bottom:32px}
+.hero-inner{display:flex; align-items:center; gap:24px; padding:40px 0}
+.hero-text{flex:1}
+.hero-text h1{font-size:2.2rem;margin:0;color:#fff}
+.hero-text p{color:#f3f4f6; margin-top:8px}
+.hero-media img{max-width:520px;width:100%;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
+/* Если вы хотите фон как background, используйте: */
+.hero{background-image:url("../images/bg_main_gradient.png"); background-size:cover; background-position:center; min-height:320px; display:flex; align-items:center}
+.hero::before{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25)); z-index:0}
+.hero-inner{position:relative; z-index:1}
 
-header nav a:hover {
-    background-color: #0056b3;
-}
+/* buttons */
+.btn{display:inline-block;background:var(--accent); color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:600}
+.btn:hover{opacity:.95; transform:translateY(-2px); transition:all .18s}
 
-/* ===========================
-   Фоновые изображения
-=========================== */
+/* recent post / posts */
+.recent-posts{padding:32px 0}
+.post{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:0 6px 18px rgba(16,24,40,0.06); margin-bottom:22px}
+.post-image img{width:100%;display:block;border-radius:8px}
+.post h2{margin:0 0 12px 0}
 
-.hero {
-    position: relative;
-    background-image: url("/images/bg_main_gradient.png");
-    background-size: cover;
-    background-position: center;
-    height: 60vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-shadow: 0 0 10px rgba(0,0,0,0.7);
-}
+/* gallery */
+.gallery{padding:28px 0}
+.gallery-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:18px}
+.gallery-item{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(16,24,40,0.06); transition:transform .18s}
+.gallery-item img{width:100%; display:block; object-fit:cover}
+.gallery-item:hover{transform:translateY(-6px)}
 
-.hero h1 {
-    font-size: 3rem;
-    z-index: 2;
-}
+/* posts list */
+.posts-list{padding:24px 0}
+.post-summary{background:#fff;padding:16px;border-radius:10px;margin-bottom:12px;box-shadow:0 6px 18px rgba(16,24,40,0.05)}
+.post-summary img{max-width:240px;border-radius:8px;float:right;margin-left:14px}
 
-.hero::before {
-    content: "";
-    position: absolute;
-    top:0; left:0;
-    width: 100%; height:100%;
-    background-color: rgba(0,0,0,0.3); /* затемнение фона */
-}
-
-/* ===========================
-   Основной контент
-=========================== */
-
-main {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* ===========================
-   Статьи и блок последней статьи
-=========================== */
-
-.post {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    margin-bottom: 40px;
-}
-
-.post img {
-    width: 100%;
-    display: block;
-}
-
-.post h2 {
-    padding: 20px;
-    font-size: 1.8rem;
-}
-
-.post p {
-    padding: 0 20px 20px;
-    font-size: 1rem;
-    color: #555;
-}
-
-/* ===========================
-   Галерея
-=========================== */
-
-.gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.gallery-item {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    width: 300px;
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.gallery-item:hover {
-    transform: translateY(-5px);
-}
-
-.gallery-item img {
-    width: 100%;
-    display: block;
-}
-
-.gallery-item h2 {
-    font-size: 1.2rem;
-    margin: 10px 0 5px 0;
-}
-
-.gallery-item p {
-    font-size: 0.95rem;
-    padding: 0 10px 10px 10px;
-    color: #555;
-}
-
-/* ===========================
-   Кнопки
-=========================== */
-
-button, .btn {
-    padding: 10px 25px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover, .btn:hover {
-    background-color: #0056b3;
-}
-
-/* ===========================
-   Подвал
-=========================== */
-
-footer {
-    background-color: #343a40;
-    color: white;
-    padding: 30px 20px;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-footer a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-/* ===========================
-   Иконки
-=========================== */
-
-.icon {
-    width: 40px;
-    height: 40px;
-    display: inline-block;
-    margin: 0 10px;
-    vertical-align: middle;
-}
-
-/* ===========================
-   Адаптивность
-=========================== */
-
-@media (max-width: 768px) {
-    .hero h1 {
-        font-size: 2rem;
-    }
-
-    .gallery-item {
-        width: 100%;
-    }
-
-    header nav a {
-        display: block;
-        margin: 5px 0;
-    }
+/* footer */
+.site-footer{background:#0f1724;color:#cbd5e1;padding:24px 0;text-align:center;margin-top:36px}
+.site-footer a{color:var(--accent)}
+/* responsive */
+@media (max-width:800px){
+  .hero-inner{flex-direction:column}
+  .hero-media img{max-width:100%}
+  .post-summary img{float:none;margin:10px 0 0 0;display:block}
+  .main-nav ul{flex-wrap:wrap; gap:8px}
 }
