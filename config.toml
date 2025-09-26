@@ -25,3 +25,9 @@ publishDir = "public"
     name = "Обо мне"
     url = "/AI-blog/about/"
     weight = 4
+
+# Чтобы подавлять предупреждение Goldmark raw HTML (если используете)
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
