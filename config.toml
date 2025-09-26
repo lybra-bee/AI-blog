@@ -3,14 +3,12 @@ languageCode = "ru-ru"
 title = "AI Blog"
 theme = "ananke"
 
-[params]
-  mainSections = ["posts"]
-
 [pagination]
   pagerSize = 5
 
 
 [params]
+  mainSections = ["posts"]
   description = "Блог о нейросетях, ИИ и высоких технологиях"
   images = ["images/og-image.png"]
 
