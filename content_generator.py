@@ -1,181 +1,120 @@
 #!/usr/bin/env python3
-# coding: utf-8
-"""
-content_generator.py
-Генерирует статьи и (по возможности) изображение для каждой статьи.
-Исправления:
- - Проверка наличия OPENROUTER_API_KEY
- - Обработка ошибок и повторные попытки при запросах
- - Санитизация имён файлов
- - Не ломает процесс, если генерация изображения не доступна
- - Создаёт корректный Markdown-файл в content/posts
-"""
-
 import os
-import re
-import time
+import requests
 import json
-import random
 from datetime import datetime
-from pathlib import Path
+import logging
 
-try:
-    import requests
-except Exception:
-    raise SystemExit("Требуется библиотека requests. Установите: pip install requests")
+# === Настройки ===
+POSTS_DIR = "content/posts"
+IMAGES_DIR = "static/images/posts"
 
-# --- Настройка путей и промптов ---
-POSTS_DIR = Path("content/posts")
-IMG_DIR = Path("static/images/gallery")
-PROMPTS = [
-    "Обзор новой архитектуры нейросети",
-    "Урок по использованию Python для ИИ",
-    "Мастер-класс: генерация изображений нейросетями",
-    "Будущее высоких технологий",
-    "Нейросети в медицине",
-    "ИИ и кибербезопасность",
-    "Как работает обучение с подкреплением",
-    "Тенденции машинного обучения 2025",
-]
+# Ключи
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-IMAGE_PROMPTS = [
-    "futuristic neural network visualization, neon cyberpunk style, high tech background",
-    "abstract AI brain, glowing circuits, futuristic background",
-    "digital neural network, colorful, high resolution background"
-]
+# Модель для текста
+LLM_MODEL = "openai/gpt-4o-mini"  # можно заменить на claude, llama, gemini через openrouter
+# Модель для изображений
+IMAGE_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
 
-# --- Утилиты ---
-def slugify(name: str) -> str:
-    """Санитизация названия в пригодный для имени файла slug."""
-    s = name.lower()
-    s = re.sub(r"[^\w\s-]", "", s)         # удалить неалфанумерические символы
-    s = re.sub(r"[\s_]+", "-", s)          # пробелы и подчеркивания в -
-    s = s.strip("-")
-    return s[:200]                         # ограничение длины
+# Убедимся, что папки есть
+os.makedirs(POSTS_DIR, exist_ok=True)
+os.makedirs(IMAGES_DIR, exist_ok=True)
 
-def get_api_key() -> str | None:
-    """Получить ключ из окружения."""
-    return os.getenv("OPENROUTER_API_KEY")
+logging.basicConfig(level=logging.INFO)
 
-# --- HTTP helpers с ретраями ---
-def post_with_retries(url, headers=None, json_payload=None, max_retries=3, backoff=1.0, timeout=30):
-    """POST-запрос с простыми повторами и обработкой ошибок."""
-    attempt = 0
-    while attempt < max_retries:
-        try:
-            r = requests.post(url, headers=headers, json=json_payload, timeout=timeout)
-            return r
-        except requests.RequestException as e:
-            attempt += 1
-            wait = backoff * attempt
-            print(f"[WARN] Ошибка запроса ({e}), попытка {attempt}/{max_retries}, ждём {wait}s")
-            time.sleep(wait)
-    return None
 
-# --- Генерация текста статьи ---
-def generate_text(title: str) -> str:
-    key = get_api_key()
-    if not key:
-        print("[WARN] OPENROUTER_API_KEY не задан. Возвращаю заглушку.")
-        return f"# {title}\n\n(Автогенерация выключена — отсутствует API-ключ.)\n"
-
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-    data = {
-        "model": "gpt-4o-mini",
-        "messages": [
-            {"role":"system","content":"Ты пишешь статьи для блога про ИИ и технологии. Стиль — обзор, урок или мастер-класс."},
-            {"role":"user","content":f"Напиши развернутую статью на тему: {title}. Формат: заголовок, короткое введение, 3-5 разделов с подзаголовками, заключение. Включи краткую аннотацию (summary)."}
-        ],
-        "max_tokens": 1200
+def generate_article():
+    """Генерация статьи через OpenRouter"""
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
     }
 
-    r = post_with_retries(url, headers=headers, json_payload=data, max_retries=3, backoff=2.0)
-    if r is None:
-        print("[ERROR] Не удалось достучаться до OpenRouter API после попыток.")
-        return f"# {title}\n\n(Ошибка генерации — API недоступен.)\n"
+    prompt = """
+    Сгенерируй статью в формате:
+    1) Заголовок (короткий и цепляющий)
+    2) Основной текст статьи (3–5 абзацев)
 
-    if r.status_code != 200:
-        print(f"[ERROR] API вернул {r.status_code}: {r.text}")
-        return f"# {title}\n\n(Ошибка генерации — код {r.status_code}.)\n"
-
-    try:
-        payload = r.json()
-        # подстраховка по структуре ответа
-        content = payload.get("choices", [{}])[0].get("message", {}).get("content")
-        if not content:
-            print("[WARN] Ответ API не содержит ожидаемого поля content.")
-            return f"# {title}\n\n(Пустой ответ API.)\n"
-        return content
-    except Exception as e:
-        print(f"[ERROR] Ошибка разбора JSON: {e}")
-        return f"# {title}\n\n(Ошибка разбора ответа API.)\n"
-
-# --- Генерация (или скачивание) изображения ---
-def generate_image(prompt: str, out_path: Path) -> bool:
+    Тема: нейросети, искусственный интеллект, будущее технологий.
     """
-    Ставит попытку получить изображение по prompt.
-    В продакшене вы можете подключить свой генератор (StableDiffusion, DALL·E и т.п.)
-    Здесь — пробная попытка через сервис Pollinations (GET), если не доступен — вернуть False.
-    """
-    # ВНИМАНИЕ: внешний сервис может менять API. Этот код — best-effort заглушка.
-    url = f"https://image.pollinations.ai/prompt/{prompt.replace(' ','%20')}"
-    try:
-        r = requests.get(url, timeout=30)
-        if r.status_code == 200 and r.content:
-            out_path.parent.mkdir(parents=True, exist_ok=True)
-            out_path.write_bytes(r.content)
-            return True
-        print(f"[WARN] Генерация изображения вернула {r.status_code}")
-    except requests.RequestException as e:
-        print(f"[WARN] Ошибка при загрузке изображения: {e}")
-    return False
 
-# --- Сохранение поста на диск ---
-def save_post(title: str, body: str, featured_image_filename: str | None = None) -> Path:
-    POSTS_DIR.mkdir(parents=True, exist_ok=True)
-    slug = slugify(title)
-    today = datetime.now().strftime("%Y-%m-%d")
-    filename = POSTS_DIR / f"{today}-{slug}.md"
-    frontmatter = [
-        "+++",
-        f"title: \"{title.replace('\"', '\'')}\"",
-        'draft = false',
-    ]
-    if featured_image_filename:
-        frontmatter.append(f'featured_image = "{featured_image_filename}"')
-    frontmatter.append("+++")
-    content = "\n".join(frontmatter) + "\n\n" + body.strip() + "\n"
-    filename.write_text(content, encoding="utf-8")
-    print(f"[INFO] Пост сохранён: {filename}")
-    return filename
+    resp = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        json={
+            "model": LLM_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+        },
+        timeout=60,
+    )
 
-# --- Main ---
-def main():
-    POSTS_DIR.mkdir(parents=True, exist_ok=True)
-    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    data = resp.json()
+    text = data["choices"][0]["message"]["content"]
 
-    title = random.choice(PROMPTS)
-    print(f"[INFO] Генерируем статью: {title}")
+    # Разделим заголовок и текст
+    parts = text.strip().split("\n", 1)
+    title = parts[0].replace("#", "").strip()
+    content = parts[1].strip() if len(parts) > 1 else ""
 
-    content = generate_text(title)
+    return title, content
 
-    # пробуем сгенерировать изображение
-    image_prompt = random.choice(IMAGE_PROMPTS)
-    img_slug = slugify(title)
-    img_filename = f"{datetime.now().strftime('%Y-%m-%d')}-{img_slug}.png"
-    img_path = IMG_DIR / img_filename
 
-    image_ok = generate_image(image_prompt, img_path)
-    if image_ok:
-        print(f"[INFO] Изображение сгенерировано: {img_path}")
-        featured = f"gallery/{img_filename}"
+def generate_image(title, filename):
+    """Генерация изображения через OpenRouter (Stable Diffusion)"""
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    prompt = f"Futuristic illustration for article about: {title}"
+
+    resp = requests.post(
+        "https://openrouter.ai/api/v1/images",
+        headers=headers,
+        json={"model": IMAGE_MODEL, "prompt": prompt},
+        timeout=120,
+    )
+
+    if resp.status_code == 200:
+        img_data = resp.content
+        with open(filename, "wb") as f:
+            f.write(img_data)
+        logging.info(f"Изображение сохранено: {filename}")
     else:
-        print("[WARN] Не удалось сгенерировать изображение, оставляю без featured_image.")
-        featured = None
+        logging.error(f"Ошибка генерации изображения: {resp.text}")
 
-    save_post(title, content, featured_image_filename=featured)
-    print("[INFO] Готово.")
+
+def create_post():
+    title, content = generate_article()
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    slug = title.lower().replace(" ", "-").replace("ё", "e")
+
+    filename = os.path.join(POSTS_DIR, f"{date_str}-{slug}.md")
+    image_name = f"{slug}.png"
+    image_path = os.path.join(IMAGES_DIR, image_name)
+
+    # Генерация изображения
+    generate_image(title, image_path)
+
+    # YAML frontmatter
+    frontmatter = [
+        "---",
+        f'title: "{title}"',
+        f"date: {date_str}",
+        "draft: false",
+        f"image: /images/posts/{image_name}",
+        "---",
+        "",
+    ]
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("\n".join(frontmatter))
+        f.write(content)
+
+    logging.info(f"Статья создана: {filename}")
+
 
 if __name__ == "__main__":
-    main()
+    create_post()
