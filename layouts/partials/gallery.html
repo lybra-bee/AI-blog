@@ -1,9 +1,9 @@
 <div class="gallery">
-  {{ $images := readDir "static/images/gallery" }}
+  {{ $images := (readDir "static/images/gallery") }}
   {{ range $images }}
     {{ if not .IsDir }}
       <div class="gallery-item">
-        <img src="{{ "images/gallery/" | relURL }}{{ .Name }}" alt="{{ .Name }}">
+        <img src="{{ (print "images/gallery/" .Name) | relURL }}" alt="{{ .Name }}">
       </div>
     {{ end }}
   {{ end }}
