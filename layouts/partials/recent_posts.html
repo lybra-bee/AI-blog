@@ -1,16 +1,11 @@
-<section class="recent-posts">
-  {{ $pages := where .Site.RegularPages "Type" "posts" }}
-  {{ $latest := first 1 (sort $pages "Date" "desc") }}
-  {{ range $latest }}
-    <article class="post">
-      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-      {{ with .Params.featured_image }}
-        <div class="post-image">
-          <img src="{{ printf "images/%s" . | relURL }}" alt="{{ .Title }}">
-        </div>
-      {{ end }}
+<div class="recent-posts">
+  {{ $posts := first 5 (where .Site.RegularPages "Type" "posts") | default (first 5 .Site.RegularPages.ByDate.Reverse) }}
+  {{ range $posts }}
+    <article class="post-summary">
+      <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+      {{ with .Params.image }}<img class="post-thumb" src="{{ . | relURL }}" alt="{{ .Title }}">{{ end }}
       <p>{{ .Summary }}</p>
-      <a class="btn" href="{{ .RelPermalink }}">Читать далее</a>
+      <p><a class="btn" href="{{ .RelPermalink }}">Читать</a></p>
     </article>
   {{ end }}
-</section>
+</div>
