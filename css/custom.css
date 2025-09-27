@@ -1,73 +1,84 @@
-/* custom.css — полный набор стилей для сайта */
-:root{
-  --bg:#f5f7fb;
-  --accent:#ff7a18;
-  --dark:#1f2933;
-  --muted:#6b7280;
-  --container:1100px;
-  --radius:10px;
+/* === Общие стили сайта === */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-  background:var(--bg); color:var(--dark); -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+/* === Шапка === */
+.site-header {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+.site-header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.site-title a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+.site-nav {
+    display: flex;
+    gap: 15px;
 }
 
-/* container */
-.container{max-width:var(--container); margin:0 auto; padding:0 16px}
+/* === Кнопки навигации === */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffffff33;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+}
+.btn:hover {
+    background-color: white;
+    color: #0056b3;
+}
 
-/* header */
-.site-header{background:rgba(0,0,0,0.6); color:#fff; position:sticky; top:0; z-index:50}
-.site-header .container{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-.logo{font-weight:700; color:#fff; text-decoration:none; font-size:1.2rem}
-.main-nav ul{display:flex;gap:12px;list-style:none;margin:0;padding:0}
-.main-nav a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:8px;transition:all .18s}
-.main-nav a:hover{background:rgba(255,255,255,0.08)}
+/* === Контент страниц === */
+.page-content {
+    max-width: 900px;
+    margin: 40px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.page-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #0056b3;
+}
+.page-content p {
+    font-size: 1.1rem;
+}
 
-/* hero */
-.hero{position:relative; overflow:hidden; margin-bottom:32px}
-.hero-inner{display:flex; align-items:center; gap:24px; padding:40px 0}
-.hero-text{flex:1}
-.hero-text h1{font-size:2.2rem;margin:0;color:#fff}
-.hero-text p{color:#f3f4f6; margin-top:8px}
-.hero-media img{max-width:520px;width:100%;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
-/* Если вы хотите фон как background, используйте: */
-.hero{background-image:url("../images/bg_main_gradient.png"); background-size:cover; background-position:center; min-height:320px; display:flex; align-items:center}
-.hero::before{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25)); z-index:0}
-.hero-inner{position:relative; z-index:1}
-
-/* buttons */
-.btn{display:inline-block;background:var(--accent); color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:600}
-.btn:hover{opacity:.95; transform:translateY(-2px); transition:all .18s}
-
-/* recent post / posts */
-.recent-posts{padding:32px 0}
-.post{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:0 6px 18px rgba(16,24,40,0.06); margin-bottom:22px}
-.post-image img{width:100%;display:block;border-radius:8px}
-.post h2{margin:0 0 12px 0}
-
-/* gallery */
-.gallery{padding:28px 0}
-.gallery-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:18px}
-.gallery-item{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(16,24,40,0.06); transition:transform .18s}
-.gallery-item img{width:100%; display:block; object-fit:cover}
-.gallery-item:hover{transform:translateY(-6px)}
-
-/* posts list */
-.posts-list{padding:24px 0}
-.post-summary{background:#fff;padding:16px;border-radius:10px;margin-bottom:12px;box-shadow:0 6px 18px rgba(16,24,40,0.05)}
-.post-summary img{max-width:240px;border-radius:8px;float:right;margin-left:14px}
-
-/* footer */
-.site-footer{background:#0f1724;color:#cbd5e1;padding:24px 0;text-align:center;margin-top:36px}
-.site-footer a{color:var(--accent)}
-/* responsive */
-@media (max-width:800px){
-  .hero-inner{flex-direction:column}
-  .hero-media img{max-width:100%}
-  .post-summary img{float:none;margin:10px 0 0 0;display:block}
-  .main-nav ul{flex-wrap:wrap; gap:8px}
+/* === Подвал === */
+footer {
+    background: #222;
+    color: #bbb;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+footer a {
+    color: #bbb;
+    text-decoration: none;
+}
+footer a:hover {
+    color: white;
 }
