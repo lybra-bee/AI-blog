@@ -1,183 +1,146 @@
 #!/usr/bin/env python3
-# coding: utf-8
-"""
-Robust content generator for AI-blog.
-- Writes posts to content/posts
-- Saves images to static/images/gallery
-- Uses OpenRouter if OPENROUTER_API_KEY is set; otherwise creates a safe fallback article
-"""
-
 import os
-import re
-import time
 import json
-import random
 import requests
-from datetime import datetime
-from pathlib import Path
+import random
+from datetime import datetime, timezone
+import shutil
+import re
+import textwrap
+from PIL import Image, ImageDraw, ImageFont
+import time
+import logging
+import argparse
+import base64
 
-# --- Config ---
-POSTS_DIR = Path("content/posts")
-IMG_DIR = Path("static/images/gallery")
-PROMPTS = [
-    "Обзор новой архитектуры нейросети",
-    "Урок по использованию Python для ИИ",
-    "Мастер-класс: генерация изображений нейросетями",
-    "Будущее высоких технологий",
-    "Нейросети в медицине",
-    "ИИ и кибербезопасность",
-    "Как работает обучение с подкреплением",
-    "Тенденции машинного обучения 2025",
-]
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
 
-IMAGE_PROMPTS = [
-    "futuristic neural network visualization, neon cyberpunk style, high tech background",
-    "abstract AI circuit board, neon, high detail",
-]
+# Директории
+POSTS_DIR = "content/posts"
+IMAGES_DIR = "assets/images/posts"
 
+# Убедимся, что папки существуют
+os.makedirs(POSTS_DIR, exist_ok=True)
+os.makedirs(IMAGES_DIR, exist_ok=True)
+
+# API-ключи (проверь что они есть в переменных окружения)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-# --- Helpers ---
-def slugify(text: str, maxlen: int = 60) -> str:
-    text = text.lower()
-    # replace cyrillic and spaces by hyphen safe approach: remove anything not alnum or dash, then collapse dashes
-    text = re.sub(r'\s+', '-', text)
-    text = re.sub(r'[^a-z0-9\-а-яё]', '-', text)
-    text = re.sub(r'-{2,}', '-', text)
-    text = text.strip('-')
-    return text[:maxlen]
+if not OPENROUTER_API_KEY:
+    logging.warning("⚠️ Переменная окружения OPENROUTER_API_KEY не установлена")
+if not GROQ_API_KEY:
+    logging.warning("⚠️ Переменная окружения GROQ_API_KEY не установлена")
 
-def ensure_dirs():
-    POSTS_DIR.mkdir(parents=True, exist_ok=True)
-    IMG_DIR.mkdir(parents=True, exist_ok=True)
 
-def download_random_image(dest: Path, width=1200, height=630):
-    # Uses picsum.photos for a simple random image (no API key)
-    url = f"https://picsum.photos/{width}/{height}"
-    try:
-        r = requests.get(url, timeout=20)
-        r.raise_for_status()
-        with open(dest, "wb") as f:
-            f.write(r.content)
-        return True
-    except Exception as e:
-        print("Warning: failed to download random image:", e)
-        return False
-
-def pick_existing_image() -> Path:
-    imgs = [p for p in IMG_DIR.iterdir() if p.is_file()]
-    return random.choice(imgs) if imgs else None
-
-# --- OpenRouter interaction (robust) ---
-def generate_text_via_openrouter(title: str, attempts=3, timeout=15):
-    if not OPENROUTER_API_KEY:
-        raise RuntimeError("OPENROUTER_API_KEY not set")
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"}
-    payload = {
-        "model": "gpt-4o-mini",
-        "messages": [
-            {"role":"system","content":"Ты пишешь статьи для блога про ИИ и технологии. Стиль — обзор, урок или мастер-класс."},
-            {"role":"user","content":f"Напиши подробную статью на тему: {title}. Структура: заголовок, вводный абзац, несколько секций с подзаголовками и заключение. Объем ~500-800 слов."}
-        ],
-        "max_tokens": 1200
+def generate_text(prompt: str, model="gpt-4o-mini") -> str:
+    """
+    Генерация текста через OpenRouter API
+    """
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
     }
-    for i in range(attempts):
-        try:
-            r = requests.post(url, headers=headers, json=payload, timeout=timeout)
-            data = r.json()
-            if r.status_code == 200 and "choices" in data and data["choices"]:
-                # model might return message structure
-                message = data["choices"][0].get("message")
-                if isinstance(message, dict):
-                    return message.get("content", "").strip()
-                # fallback to 'text' or similar
-                return data["choices"][0].get("text", "").strip()
-            else:
-                # print server message for debugging
-                print("OpenRouter response:", json.dumps(data, ensure_ascii=False))
-                # if 402 or other code, break
-                if r.status_code in (401, 402, 429):
-                    break
-        except requests.RequestException as e:
-            print(f"Request attempt {i+1} failed: {e}")
-        time.sleep(2**i)
-    raise RuntimeError("OpenRouter generation failed after retries")
+    data = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+    }
 
-# --- Fallback generator (if API missing or fails) ---
-def generate_text_local_fallback(title: str) -> str:
-    intro = f"В этой статье рассматривается «{title}». Я опишу ключевые концепции, практические примеры и дам рекомендации."
-    sections = []
-    sections.append("## Введение\n" + " ".join([intro]*2))
-    sections.append("## Основные идеи\n" + "Здесь описаны основные подходы, архитектуры и ключевые понятия.")
-    sections.append("## Практическая часть\n" + "Пошаговый пример и рекомендации для внедрения.")
-    sections.append("## Заключение\n" + "Короткое резюме и направления для дальнейшего чтения.")
-    return "\n\n".join(sections)
+    logging.info("🔹 Отправка запроса к OpenRouter...")
+    response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
 
-# --- Main creation logic ---
+    if response.status_code != 200:
+        logging.error(f"❌ Ошибка OpenRouter API: {response.status_code} {response.text}")
+        return ""
+
+    result = response.json()
+    return result["choices"][0]["message"]["content"]
+
+
+def generate_image(prompt: str) -> str:
+    """
+    Генерация изображения через Groq API (или другой сервис)
+    """
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    data = {"prompt": prompt}
+
+    logging.info("🎨 Генерация изображения...")
+    response = requests.post("https://api.groq.com/v1/images", headers=headers, json=data)
+
+    if response.status_code != 200:
+        logging.error(f"❌ Ошибка Groq API: {response.status_code} {response.text}")
+        return ""
+
+    result = response.json()
+    img_b64 = result.get("data", [{}])[0].get("b64_json")
+
+    if not img_b64:
+        logging.error("❌ Пустой ответ при генерации изображения")
+        return ""
+
+    img_data = base64.b64decode(img_b64)
+
+    filename = f"{datetime.now().strftime('%Y-%m-%d-%H%M%S')}-image.png"
+    filepath = os.path.join(IMAGES_DIR, filename)
+
+    with open(filepath, "wb") as f:
+        f.write(img_data)
+
+    logging.info(f"✅ Сохранено изображение: {filepath}")
+    return f"/{filepath}"
+
+
 def create_post():
-    ensure_dirs()
-    title = random.choice(PROMPTS)
-    slug = slugify(title)
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    filename = f"{today}-{slug}.md"
-    filepath = POSTS_DIR / filename
+    """
+    Генерация статьи с картинкой
+    """
+    logging.info("📝 Генерация новой статьи...")
 
-    # Generate or reuse image
-    existing = pick_existing_image()
-    if existing:
-        imgname = f"{today}-{slug}{existing.suffix}"
-        imgpath = IMG_DIR / imgname
-        # copy existing to new name (to avoid overwriting)
-        try:
-            with open(existing, "rb") as src, open(imgpath, "wb") as dst:
-                dst.write(src.read())
-            print("Reused existing image:", existing.name)
-        except Exception as e:
-            print("Failed to copy existing image:", e)
-            imgpath = IMG_DIR / f"{today}-{slug}.png"
-            download_random_image(imgpath)
-    else:
-        imgpath = IMG_DIR / f"{today}-{slug}.png"
-        ok = download_random_image(imgpath)
-        if not ok:
-            # If download failed, leave image empty (Hugo templates should handle absence)
-            imgpath = None
+    title_prompt = "Придумай интересный заголовок для статьи о будущем искусственного интеллекта."
+    title = generate_text(title_prompt).strip()
 
-    # Generate article text
-    content = None
-    if OPENROUTER_API_KEY:
-        try:
-            content = generate_text_via_openrouter(title)
-        except Exception as e:
-            print("OpenRouter failed:", e)
-            content = generate_text_local_fallback(title)
-    else:
-        print("OPENROUTER_API_KEY not set — using local fallback text.")
-        content = generate_text_local_fallback(title)
+    article_prompt = f"Напиши статью под заголовком: {title}. Тема — нейросети, ИИ, технологии. Объем: 5-6 абзацев."
+    content = generate_text(article_prompt).strip()
 
-    # Build YAML front matter
-    yaml_front = [
+    image_prompt = f"Создай картинку для статьи: {title}"
+    image_path = generate_image(image_prompt)
+
+    # Имя файла
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", title.lower()).strip("-")
+    filename = f"{date_str}-{slug}.md"
+    filepath = os.path.join(POSTS_DIR, filename)
+
+    # Frontmatter + контент
+    frontmatter = [
         "---",
-        f'title: "{title.replace(\'"\', "\\\"")}"',
-        f'date: "{datetime.utcnow().isoformat()}Z"',
-        'draft: false',
+        f'title: "{title.replace("\"", "\\\"")}"',
+        f"date: {datetime.now(timezone.utc).isoformat()}",
+        f"image: {image_path}",
+        "---",
+        "",
     ]
-    if imgpath:
-        yaml_front.append(f'image: "{("/" + str(imgpath).replace(os.path.sep, "/"))}"')
-    yaml_front.append("---\n")
 
-    # Compose full markdown
-    md = "\n".join(yaml_front) + content + "\n"
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("\n".join(frontmatter))
+        f.write(content)
 
-    # Write file
-    try:
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(md)
-        print("Created post:", filepath)
-    except Exception as e:
-        print("Failed to write post:", e)
-        raise
+    logging.info(f"✅ Сохранена статья: {filepath}")
+
 
 if __name__ == "__main__":
-    create_post()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--count", type=int, default=1, help="Сколько статей сгенерировать")
+    args = parser.parse_args()
+
+    for _ in range(args.count):
+        create_post()
+        time.sleep(2)  # задержка между генерациями
