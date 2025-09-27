@@ -1,16 +1,26 @@
 {{ define "main" }}
-<section class="hero">
-  <div class="hero-inner container">
-    <div class="hero-text">
-      <h1>{{ .Site.Title }}</h1>
-      <p>{{ .Site.Params.description }}</p>
-      <a class="btn" href="{{ "/AI-blog/posts/" | relURL }}">Читать статьи</a>
-    </div>
-    <div class="hero-media">
-      <img src="{{ "images/bg_main_gradient.png" | relURL }}" alt="фон">
-    </div>
-  </div>
-</section>
+  {{ $latest := first 1 (where .Site.RegularPages "Type" "posts" ) | default (first 1 .Site.RegularPages) }}
+  {{ if $latest }}
+    {{ $p := index $latest 0 }}
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>{{ $p.Title }}</h1>
+        {{ with $p.Params.image }}
+          <img class="hero-image" src="{{ . | relURL }}" alt="{{ $p.Title }}">
+        {{ end }}
+        <p class="hero-excerpt">{{ $p.Summary }}</p>
+        <p><a class="btn" href="{{ $p.RelPermalink }}">Читать</a></p>
+      </div>
+    </section>
+  {{ end }}
 
-{{ partial "recent_posts.html" . }}
+  <section class="recent">
+    <h2>Последние статьи</h2>
+    {{ partial "recent_posts.html" . }}
+  </section>
+
+  <section class="gallery-section">
+    <h2>Галерея</h2>
+    {{ partial "gallery.html" . }}
+  </section>
 {{ end }}
