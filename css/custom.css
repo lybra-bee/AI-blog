@@ -1,84 +1,162 @@
-/* === Общие стили сайта === */
-body {
-    margin: 0;
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    line-height: 1.6;
+/* Custom site CSS
+   - Легкая, современная типографика
+   - Четкие кнопки
+   - Фон hero через inline-style в шаблоне или прямой URL
+*/
+
+:root{
+  --accent:#0b74de;
+  --dark:#222;
+  --muted:#666;
+  --bg:#fafafa;
+  --card:#fff;
+  --radius:12px;
+  --container:1100px;
+  --font-sans: Inter, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* === Шапка === */
-.site-header {
-    background: linear-gradient(90deg, #007bff, #0056b3);
-    color: white;
-    padding: 15px 0;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--font-sans);
+  color:var(--dark);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Container */
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Header */
+.site-header{
+  background: rgba(255,255,255,0.98);
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top:0;
+  z-index:1000;
 }
 .site-header .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 16px;
 }
-.site-title a {
-    text-decoration: none;
-    color: white;
-    font-size: 1.8rem;
-    font-weight: bold;
+.brand-link{
+  font-weight:700;
+  font-size:1.2rem;
+  color:var(--dark);
+  text-decoration:none;
 }
-.site-nav {
-    display: flex;
-    gap: 15px;
+.site-desc{margin:0;font-size:0.85rem;color:var(--muted)}
+
+/* Nav buttons */
+.main-nav .nav-item{
+  display:inline-block;
+  margin-left:8px;
+  padding:8px 14px;
+  text-decoration:none;
+  border-radius:8px;
+  background:transparent;
+  color:var(--dark);
+  transition: all .18s ease;
+  border: 1px solid transparent;
+}
+.main-nav .nav-item:hover{
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
 }
 
-/* === Кнопки навигации === */
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #ffffff33;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 600;
-    color: white;
-    transition: all 0.3s ease;
+/* Hero */
+.hero{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height: 46vh;
+  color:white;
+  position:relative;
+  text-align:center;
+  background-size:cover;
+  background-position:center;
+  padding:40px 16px;
 }
-.btn:hover {
-    background-color: white;
-    color: #0056b3;
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35));
 }
+.hero .hero-inner{position:relative;z-index:2;max-width:900px}
+.hero h1{font-size:2rem;margin:0 0 12px}
+.hero-excerpt{margin:0 0 16px;color:rgba(255,255,255,0.95);}
 
-/* === Контент страниц === */
-.page-content {
-    max-width: 900px;
-    margin: 40px auto;
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+/* Buttons */
+.btn{
+  display:inline-block;
+  padding:10px 18px;
+  background:var(--accent);
+  color:#fff;
+  text-decoration:none;
+  border-radius:8px;
+  font-weight:600;
+  transition:all .18s;
 }
-.page-content h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #0056b3;
-}
-.page-content p {
-    font-size: 1.1rem;
-}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(11,116,222,0.12)}
 
-/* === Подвал === */
-footer {
-    background: #222;
-    color: #bbb;
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
+/* Main */
+.site-main{padding:32px 0}
+.recent{margin-bottom:40px}
+
+/* Post card */
+.post-summary{
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  padding:16px;
+  margin-bottom:20px;
+  overflow:hidden;
 }
-footer a {
-    color: #bbb;
-    text-decoration: none;
+.post-summary h3{margin:0 0 10px}
+.post-thumb{width:100%;border-radius:8px;margin-bottom:8px}
+
+/* Gallery */
+.gallery{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  justify-content:center;
 }
-footer a:hover {
-    color: white;
+.gallery-item{
+  width:260px;
+  background: white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+}
+.gallery-item img{width:100%;height:170px;object-fit:cover;display:block}
+
+/* Footer */
+.site-footer{
+  background:#111;
+  color:#fff;
+  padding:28px 0;
+  margin-top:48px;
+}
+.site-footer .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.site-footer a{color: #9fd0ff;text-decoration:none}
+
+/* Responsive */
+@media (max-width:800px){
+  .main-nav .nav-item{padding:8px 10px;margin-left:6px}
+  .gallery-item{width:48%}
+}
+@media (max-width:480px){
+  .hero h1{font-size:1.6rem}
+  .gallery-item{width:100%}
 }
